@@ -18,6 +18,8 @@ import { type ProjectProps } from './components/Projects/Projects'
 const app = initializeApp(firebaseConfig)
 
 interface AboutMePayload {
+    banner: string
+    photo: string
     linkedinUrl: string
     name: string
     paragraphs: string[]
@@ -58,7 +60,7 @@ const App: React.FC = () => {
         void fetchFire<ProjectProps>('projects', 'recent').then((dataList: ProjectProps[]) => {
             setProjects(dataList)
         })
-        void fetchFire<ProjectProps>('personal-projects', 'recent').then((dataList: ProjectProps[]) => {
+        void fetchFire<ProjectProps>('personal-projects', 'recent', 'desc').then((dataList: ProjectProps[]) => {
             setPersonalProjects(dataList)
         })
     }, [])
@@ -88,14 +90,20 @@ const App: React.FC = () => {
                 }]}
             />
             <div style={{ width: '100%' }}>
-                <Banner backgroundImageUrl="/san-antonio-banner.avif" />
+                {
+                    aboutMe !== null
+                        ? (
+                            <Banner backgroundImageUrl={aboutMe.banner} />
+                        )
+                        : null
+                }
             </div>
             <div id="about-me-section" className='mt-5'>
                 {
                     aboutMe !== null
                         ? (
                             <AboutMe
-                                imageUrl='/enhanced_professional_photo.jpg'
+                                imageUrl={aboutMe.photo}
                                 name={aboutMe.name}
                                 paragraphs={aboutMe.paragraphs}
                             />
