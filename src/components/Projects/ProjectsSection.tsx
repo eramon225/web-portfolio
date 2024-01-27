@@ -1,6 +1,6 @@
 import React from 'react'
 import { Container, Row, Col } from 'reactstrap'
-import ProjectCard, { type ProjectProps } from './Project'
+import ProjectCard, { type ProjectProps } from './Projects'
 
 interface ProjectsSectionProps {
     label: string

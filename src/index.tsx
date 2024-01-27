@@ -2,18 +2,18 @@ import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './index.css'
-import ProfessionalExperience, { type ExperienceProps } from './components/ProfessionalExperience'
-import Skills, { type SkillCategoryProps } from './components/Skills'
-import ProjectsSection from './components/ProjectSection'
-import AboutMe from './components/AboutMe'
-import Navigator from './components/Navigator'
-import Banner from './components/Banner'
+import ProfessionalExperience, { type ExperienceProps } from './components/Experience/Experience'
+import Skills, { type SkillCategoryProps } from './components/Skills/Skills'
+import ProjectsSection from './components/Projects/ProjectsSection'
+import AboutMe from './components/AboutMe/AboutMe'
+import Navigator from './components/Navigator/Navigator'
+import Banner from './components/Banner/Banner'
 import firebaseConfig from '../public/firebaseConfig.json'
 import { initializeApp } from 'firebase/app'
 import { getFirestore, collection, getDocs, orderBy, query } from 'firebase/firestore'
-import EducationSection from './components/EducationSection'
-import { type EducationProps } from './components/Education'
-import { type ProjectProps } from './components/Project'
+import EducationSection from './components/Education/EducationSection'
+import { type EducationProps } from './components/Education/Education'
+import { type ProjectProps } from './components/Projects/Projects'
 
 const app = initializeApp(firebaseConfig)
 
@@ -41,7 +41,7 @@ const App: React.FC = () => {
             return querySnapshot.docs.map(doc => doc.data()) as T[]
         }
 
-        void fetchFire<SkillCategoryProps>('skills', 'category').then((dataList: SkillCategoryProps[]) => {
+        void fetchFire<SkillCategoryProps>('skills', 'order').then((dataList: SkillCategoryProps[]) => {
             setSkills(dataList)
         })
         void fetchFire<ExperienceProps>('professional-experience', 'recent').then((dataList: ExperienceProps[]) => {
