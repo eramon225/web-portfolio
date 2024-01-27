@@ -1,7 +1,12 @@
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState } from 'react'
-import { Card, CardBody, CardText, Badge, Button, Collapse, List, Tooltip, CardHeader } from 'reactstrap'
+import { Card, CardBody, CardText, Badge, Button, Collapse, CardHeader, ListGroup, ListGroupItem } from 'reactstrap'
+
+interface GithubLink {
+    label: string
+    url: string
+}
 
 export interface ProjectProps {
     title: string
@@ -10,14 +15,13 @@ export interface ProjectProps {
     teamSize?: number
     contributions?: string[]
     diagram?: string
+    githubLinks?: GithubLink[]
     id: string
 };
 
 const ProjectCard: React.FC<ProjectProps> = ({ title, description, technologies, teamSize, contributions, diagram, id }) => {
     const [isOpen, setIsOpen] = useState(false)
-    const [tooltipOpen, setTooltipOpen] = useState(false)
 
-    const toggleTooltip = (): void => { setTooltipOpen(!tooltipOpen) }
     const toggleCollapse = (): void => { setIsOpen(!isOpen) }
 
     return (
@@ -46,21 +50,23 @@ const ProjectCard: React.FC<ProjectProps> = ({ title, description, technologies,
                             {
                                 teamSize !== undefined && teamSize > 0
                                     ? (
-                                        <h5>Team Size: {teamSize}</h5>
+                                        <span className='mb-3'>
+                                            <Badge color='primary'>{teamSize} team members</Badge>
+                                        </span>
                                     )
                                     : null
                             }
                             {
                                 contributions !== undefined && contributions.length > 0
                                     ? (
-                                        <React.Fragment>
+                                        <div className='mb-3'>
                                             <h5>Contributions</h5>
-                                            <List>
+                                            <ListGroup flush>
                                                 { contributions.map((contribution, index) => (
-                                                    <li key={index}>{contribution}</li>
+                                                    <ListGroupItem color='dark' key={index}>{contribution}</ListGroupItem>
                                                 )) }
-                                            </List>
-                                        </React.Fragment>
+                                            </ListGroup>
+                                        </div>
                                     )
                                     : null
                             }
@@ -71,7 +77,7 @@ const ProjectCard: React.FC<ProjectProps> = ({ title, description, technologies,
                                             display: 'grid',
                                             placeItems: 'center'
                                         }}>
-                                            <Card color='dark' style={{ maxWidth: '90%', maxHeight: '60em' }}>
+                                            <Card color='dark'>
                                                 <CardHeader><h5>Stack Diagram</h5></CardHeader>
                                                 <img
                                                     src={diagram}
@@ -93,19 +99,12 @@ const ProjectCard: React.FC<ProjectProps> = ({ title, description, technologies,
                         <Button
                             id={'Tooltip-' + id}
                             color='light text-dark'
-                            className='rounded-circle m-2'
+                            size='sm'
+                            className='m-2'
                             onClick={toggleCollapse}
                         >
-                            <FontAwesomeIcon icon={ isOpen ? faChevronUp : faChevronDown } size='sm'/>
+                            <FontAwesomeIcon icon={ isOpen ? faChevronUp : faChevronDown } size='sm'/> See { isOpen ? 'Less' : 'More' }
                         </Button>
-                        <Tooltip
-                            placement={'right'}
-                            isOpen={tooltipOpen}
-                            target={'Tooltip-' + id}
-                            toggle={toggleTooltip}
-                        >
-                            See { isOpen ? 'Less' : 'More' }
-                        </Tooltip>
                     </div>
                 </div>
             </CardBody>
