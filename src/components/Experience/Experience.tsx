@@ -10,7 +10,7 @@ export interface ExperienceProps {
 
 const ExperienceCard: React.FC<ExperienceProps> = ({ role, company, duration, description }) => {
     return (
-        <Card className="mb-3" color='secondary'>
+        <Card className="mb-3" color='dark'>
             <CardHeader><h5>{role} - {company}</h5></CardHeader>
             <CardBody>
                 <CardText><i>{duration}</i></CardText>
