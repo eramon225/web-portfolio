@@ -1,12 +1,12 @@
 import React from 'react'
-import { Badge, Container, Col, Row } from 'reactstrap'
+import { Badge } from 'reactstrap'
 
-export interface SkillCategoryProps {
+export interface SkillsProps {
     category: string
     skills: string[]
 };
 
-const SkillCategory: React.FC<SkillCategoryProps> = ({ category, skills }) => {
+const Skills: React.FC<SkillsProps> = ({ category, skills }) => {
     return (
         <div className='mb-2'>
             <h5>{category}</h5>
@@ -23,23 +23,6 @@ const SkillCategory: React.FC<SkillCategoryProps> = ({ category, skills }) => {
                 </span>
             ))}
         </div>
-    )
-}
-
-interface SkillsProps {
-    skillCategories: SkillCategoryProps[]
-};
-
-const Skills: React.FC<SkillsProps> = ({ skillCategories }) => {
-    return (
-        <Container>
-            <Row>
-                <Col>
-                    <h3>Skills</h3>
-                    {skillCategories.map((entry: SkillCategoryProps, index) => (<SkillCategory key={index} {...entry} />))}
-                </Col>
-            </Row>
-        </Container>
     )
 }
 

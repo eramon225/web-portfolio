@@ -1,74 +1,26 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './index.css'
-import ProfessionalExperience, { type ExperienceProps } from './components/Experience/Experience'
-import Skills, { type SkillCategoryProps } from './components/Skills/Skills'
 import ProjectsSection from './components/Projects/ProjectsSection'
 import AboutMe from './components/AboutMe/AboutMe'
 import Navigator from './components/Navigator/Navigator'
 import Banner from './components/Banner/Banner'
 import firebaseConfig from '../public/firebaseConfig.json'
 import { initializeApp } from 'firebase/app'
-import { getFirestore, collection, getDocs, orderBy, query } from 'firebase/firestore'
+import { getFirestore } from 'firebase/firestore'
 import EducationSection from './components/Education/EducationSection'
-import { type EducationProps } from './components/Education/Education'
-import { type ProjectProps } from './components/Projects/Projects'
+import SkillsSection from './components/Skills/SkillsSection'
+import ExperienceSection from './components/Experience/ExperienceSection'
 
 const app = initializeApp(firebaseConfig)
 
-interface AboutMePayload {
-    banner: string
-    photo: string
-    linkedinUrl: string
-    name: string
-    paragraphs: string[]
-}
-
 const App: React.FC = () => {
-    const [skills, setSkills] = useState<SkillCategoryProps[]>([])
-    const [experience, setExperience] = useState<ExperienceProps[]>([])
-    const [aboutMe, setAboutMe] = useState<AboutMePayload | null>(null)
-    const [projects, setProjects] = useState<ProjectProps[]>([])
-    const [personalProjects, setPersonalProjects] = useState<ProjectProps[]>([])
-    const [education, setEducation] = useState<EducationProps[]>([])
-
     const db = getFirestore(app)
-
-    useEffect(() => {
-        async function fetchFire<T> (collectionName: string, orderByField: string = '', orderDirection: 'asc' | 'desc' = 'asc'): Promise<T[]> {
-            const collectionRef = collection(db, collectionName)
-            const queryConstraint = query(collectionRef, orderBy(orderByField, orderDirection))
-            const querySnapshot = await getDocs(queryConstraint)
-            return querySnapshot.docs.map(doc => doc.data()) as T[]
-        }
-
-        void fetchFire<SkillCategoryProps>('skills', 'order').then((dataList: SkillCategoryProps[]) => {
-            setSkills(dataList)
-        })
-        void fetchFire<ExperienceProps>('professional-experience', 'recent').then((dataList: ExperienceProps[]) => {
-            setExperience(dataList)
-        })
-        void fetchFire<AboutMePayload>('about-me', 'name').then((dataList: AboutMePayload[]) => {
-            if (dataList.length > 0) {
-                setAboutMe(dataList[0])
-            }
-        })
-        void fetchFire<EducationProps>('education', 'recent').then((dataList: EducationProps[]) => {
-            setEducation(dataList)
-        })
-        void fetchFire<ProjectProps>('projects', 'recent').then((dataList: ProjectProps[]) => {
-            setProjects(dataList)
-        })
-        void fetchFire<ProjectProps>('personal-projects', 'recent', 'desc').then((dataList: ProjectProps[]) => {
-            setPersonalProjects(dataList)
-        })
-    }, [])
 
     return (
         <React.Fragment>
             <Navigator
-                linkedinUrl={aboutMe !== null ? aboutMe.linkedinUrl : ''}
                 items={[{
                     label: 'About Me',
                     to: 'about-me-section'
@@ -88,77 +40,28 @@ const App: React.FC = () => {
                     label: 'Education',
                     to: 'education-section'
                 }]}
+                db={db} collectionName='navigator' orderByField='linkedinUrl'
             />
             <div style={{ width: '100%' }}>
-                {
-                    aboutMe !== null
-                        ? (
-                            <Banner backgroundImageUrl={aboutMe.banner} />
-                        )
-                        : null
-                }
+                <Banner db={db} collectionName='banner' orderByField='image' />
             </div>
             <div id="about-me-section" className='mt-5'>
-                {
-                    aboutMe !== null
-                        ? (
-                            <AboutMe
-                                imageUrl={aboutMe.photo}
-                                name={aboutMe.name}
-                                paragraphs={aboutMe.paragraphs}
-                            />
-                        )
-                        : null
-                }
+                <AboutMe db={db} collectionName='about-me' orderByField='name' />
             </div>
             <div id="skills-section" className="mb-5">
-                {
-                    skills.length > 0
-                        ? (
-                            <Skills
-                                skillCategories={skills}
-                            />
-                        )
-                        : null
-                }
+                <SkillsSection db={db} collectionName='skills' orderByField='order' />
             </div>
             <div id="experience-section" className="mb-5">
-                {
-                    experience.length > 0
-                        ? (
-                            <ProfessionalExperience experiences={experience}/>
-                        )
-                        : null
-                }
+                <ExperienceSection db={db} collectionName='professional-experience' orderByField='recent' />
             </div>
             <div id="projects-section" className="mb-5">
-                {
-                    projects.length > 0
-                        ? (
-                            <ProjectsSection label="Projects" projects={projects}/>
-                        )
-                        : null
-                }
+                <ProjectsSection label='Projects' db={db} collectionName='projects' orderByField='recent'/>
             </div>
             <div id="personal-projects-section" className="mb-5">
-                {
-                    personalProjects.length > 0
-                        ? (
-                            <ProjectsSection label="Personal Projects" projects={personalProjects}/>
-                        )
-                        : null
-                }
+                <ProjectsSection label='Personal Projects' db={db} collectionName='personal-projects' orderByField='recent'/>
             </div>
-            <div
-                id="education-section"
-            >
-                {
-                    education.length > 0
-                        ? (
-                            <EducationSection educationList={education}/>
-                        )
-                        : null
-                }
+            <div id="education-section">
+                <EducationSection db={db} collectionName='education' orderByField='recent'/>
             </div>
         </React.Fragment>
     )

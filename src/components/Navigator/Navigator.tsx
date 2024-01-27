@@ -1,20 +1,34 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLinkedin } from '@fortawesome/free-brands-svg-icons'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Navbar, Nav, NavItem, NavLink, NavbarToggler, Collapse, NavbarBrand } from 'reactstrap'
+import { type FirebaseProps, fetchFire } from '../../firebaseUtils'
+
+interface NavigatorPaylod {
+    linkedinUrl: string
+}
 
 interface NavigatorItem {
     label: string | React.ReactNode
     to: string
 }
 
-interface NavigatorProps {
+interface NavigatorProps extends FirebaseProps {
     items: NavigatorItem[]
-    linkedinUrl: string
 }
 
-const NavbarComponent: React.FC<NavigatorProps> = ({ items, linkedinUrl }) => {
+const NavbarComponent: React.FC<NavigatorProps> = ({ items, db, collectionName, orderByField, orderDirection }) => {
     const [collapsed, setCollapsed] = useState(true)
+    const [navPayload, setNavPayload] = useState<NavigatorPaylod | null>(null)
+
+    useEffect(() => {
+        void fetchFire<NavigatorPaylod>(db, collectionName, orderByField, orderDirection).then((dataList: NavigatorPaylod[]) => {
+            if (dataList.length > 0) {
+                setNavPayload(dataList[0])
+            }
+        })
+    }, [])
+
     const scrollToSection = (sectionId: string): void => {
         const section = document.getElementById(sectionId)
         const navbar = document.querySelector('.navbar')
@@ -42,7 +56,7 @@ const NavbarComponent: React.FC<NavigatorProps> = ({ items, linkedinUrl }) => {
                 zIndex: 10
             }}
         >
-            <NavbarBrand href={linkedinUrl}>
+            <NavbarBrand href={navPayload !== null ? navPayload.linkedinUrl : ''}>
                 <FontAwesomeIcon icon={faLinkedin}/>
             </NavbarBrand>
             <NavbarToggler onClick={toggleNavbar}/>
