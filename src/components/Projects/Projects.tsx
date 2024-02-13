@@ -1,7 +1,7 @@
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState } from 'react'
-import { Card, CardBody, CardText, Badge, Button, Collapse, CardHeader, ListGroup, ListGroupItem } from 'reactstrap'
+import { Card, CardBody, CardText, Badge, Button, Collapse, CardHeader, ListGroup, ListGroupItem, CardImg } from 'reactstrap'
 
 interface GithubLink {
     label: string
@@ -79,14 +79,9 @@ const ProjectCard: React.FC<ProjectProps> = ({ title, description, technologies,
                                         }}>
                                             <Card color='dark'>
                                                 <CardHeader><h5>Stack Diagram</h5></CardHeader>
-                                                <img
+                                                <CardImg
                                                     src={diagram}
                                                     alt='No diagram yet for this project'
-                                                    style={{
-                                                        width: 'auto',
-                                                        height: 'auto',
-                                                        display: 'block'
-                                                    }}
                                                 />
                                             </Card>
                                         </div>
